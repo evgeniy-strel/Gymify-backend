@@ -32,3 +32,24 @@ export async function getDays(programId, weekNumber) {
 
   return result;
 }
+
+/**
+ * Обновить день по id
+ */
+export async function updateDay(item) {
+  const { id, ...fields } = item;
+
+  const { data, error } = await supabase
+    .from("Days")
+    .update(fields)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Supabase updateDay error:", error);
+    throw error;
+  }
+
+  return data;
+}

@@ -23,4 +23,19 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+/**
+ * PUT /programs/:id
+ */
+router.put("/:id", async (req, res) => {
+  try {
+    const program = await updateProgram({ id: req.params.id, ...req.body });
+    res.json(program);
+  } catch (error) {
+    res.status(500).json({
+      error: "Failed to update program",
+      details: error.message,
+    });
+  }
+});
+
 export default router;
