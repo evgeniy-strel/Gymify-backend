@@ -8,6 +8,7 @@ import programsRoutes from "./programs/programs.routes.js";
 import exercisesRoutes from "./exercises/exercises.routes.js";
 import daysRoutes from "./days/days.routes.js";
 import setsRoutes from "./sets/sets.routes.js";
+import timersRoutes from "./timers/timers.routes.js";
 
 const app = express();
 app.use(cors());
@@ -22,6 +23,7 @@ app.use("/programs", programsRoutes);
 app.use("/days", daysRoutes);
 app.use("/exercises", exercisesRoutes);
 app.use("/sets", setsRoutes);
+app.use("/timers", timersRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
