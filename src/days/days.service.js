@@ -34,6 +34,23 @@ export async function getDays(programId, weekNumber) {
 }
 
 /**
+ * Получения дня по идентификатору
+ */
+export async function getDayById(dayId) {
+  const { data, error } = await supabase
+    .from("Days")
+    .select("*")
+    .eq("id", dayId)
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+/**
  * Обновить день по id
  */
 export async function updateDay(item) {

@@ -1,5 +1,5 @@
 import express from "express";
-import { getDays, updateDay } from "./days.service.js";
+import { getDays, updateDay, getDayById } from "./days.service.js";
 
 const router = express.Router();
 
@@ -13,6 +13,23 @@ router.get("/:programId/:week", async (req, res) => {
       error: "Failed to load days",
       details: error.message,
     });
+  }
+});
+
+// GET /days/:id
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ error: "day id is required" });
+    }
+
+    const day = await getDayById(id);
+    res.json(day);
+  } catch (err) {
+    console.error("get day error:", err);
+    res.status(500).json({ error: "Failed to load day" });
   }
 });
 
