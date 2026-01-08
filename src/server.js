@@ -10,6 +10,7 @@ import daysRoutes from "./days/days.routes.js";
 import setsRoutes from "./sets/sets.routes.js";
 import timersRoutes from "./timers/timers.routes.js";
 import historyRoutes from "./history/history.routes.js";
+import bodyWeightRoutes from "./bodyWeight/bodyWeight.routes.js";
 
 const app = express();
 app.use(cors());
@@ -26,6 +27,7 @@ app.use("/exercises", exercisesRoutes);
 app.use("/sets", setsRoutes);
 app.use("/timers", timersRoutes);
 app.use("/history", historyRoutes);
+app.use("/bodyWeight", bodyWeightRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
