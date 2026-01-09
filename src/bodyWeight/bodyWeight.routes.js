@@ -2,6 +2,8 @@ import express from "express";
 import {
   createBodyWeight,
   getBodyWeightHistory,
+  getBodyWeightHistoryGrouped,
+  getCurrentBodyWeight,
 } from "./bodyWeight.service.js";
 
 const router = express.Router();
@@ -31,13 +33,28 @@ router.post("/", async (req, res) => {
 /**
  * GET /body-weight
  */
-router.get("/", async (_req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const history = await getBodyWeightHistory();
+    const { grouped = false } = (req.query || {});
+
+    const history = await (grouped ? getBodyWeightHistoryGrouped() : getBodyWeightHistory());
     res.json(history);
   } catch (err) {
     console.error("get body weight error:", err);
     res.status(500).json({ error: "Failed to load body weight history" });
+  }
+});
+
+/**
+ * GET /body-weight/current
+ */
+router.get("/current", async (req, res) => {
+  try {
+    const weight = await getCurrentBodyWeight();
+    res.json(weight);
+  } catch (err) {
+    console.error("Error getting current body weight:", err);
+    res.status(500).json({ error: "Failed to get current body weight" });
   }
 });
 
