@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createBodyWeight,
+  getBodyWeightGraphData,
   getBodyWeightHistory,
   getBodyWeightHistoryGrouped,
   getCurrentBodyWeight,
@@ -9,7 +10,7 @@ import {
 const router = express.Router();
 
 /**
- * POST /body-weight
+ * POST /bodyWeight
  * body: { value_kg, measured_at }
  */
 router.post("/", async (req, res) => {
@@ -31,7 +32,7 @@ router.post("/", async (req, res) => {
 });
 
 /**
- * GET /body-weight
+ * GET /bodyWeight
  */
 router.get("/", async (req, res) => {
   try {
@@ -46,7 +47,20 @@ router.get("/", async (req, res) => {
 });
 
 /**
- * GET /body-weight/current
+ * GET /bodyWeight/graph
+ */
+router.get("/graph", async (req, res) => {
+  try {
+    const data = await getBodyWeightGraphData();
+    res.json(data);
+  } catch (err) {
+    console.error("get body weight graph data error:", err);
+    res.status(500).json({ error: "Failed to load body weight graph data" });
+  }
+});
+
+/**
+ * GET /bodyWeight/current
  */
 router.get("/current", async (req, res) => {
   try {
