@@ -1,5 +1,5 @@
 import express from "express";
-import { getDays, updateDay, getDayById } from "./days.service.js";
+import { getDays, createDay, updateDay, getDayById } from "./days.service.js";
 
 const router = express.Router();
 
@@ -30,6 +30,26 @@ router.get("/:id", async (req, res) => {
   } catch (err) {
     console.error("get day error:", err);
     res.status(500).json({ error: "Failed to load day" });
+  }
+});
+
+/**
+ * POST /days
+ * body: { week_id, title }
+ */
+router.post("/", async (req, res) => {
+  try {
+    const { week_id, title } = req.body;
+
+    if (!week_id || !title) {
+      return res.status(400).json({ error: "week_id and title are required" });
+    }
+
+    const day = await createDay(week_id, title);
+    res.json(day);
+  } catch (err) {
+    console.error("Create day error:", err);
+    res.status(500).json({ error: "Failed to create day" });
   }
 });
 

@@ -51,6 +51,45 @@ export async function getDayById(dayId) {
 }
 
 /**
+ * Создание нового дня для недели
+ * @param {string} weekId
+ * @param {string} title
+ */
+export async function createDay(weekId, title) {
+  // 1. Получаем количество дней с этой недели
+  const { data: existingDays, error: countError } = await supabase
+    .from("Days")
+    .select("number")
+    .eq("week_id", weekId);
+
+  if (countError) throw countError;
+
+  // 2. Вычисляем номер дня
+  const number = existingDays?.length ? existingDays.length + 1 : 1;
+
+  // 3. Формируем id
+  const id = `${weekId}_${number}`;
+
+  // 4. Создаём запись
+  const { data, error } = await supabase
+    .from("Days")
+    .insert([
+      {
+        id,
+        week_id: weekId,
+        title,
+        number,
+      },
+    ])
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return data;
+}
+
+/**
  * Обновить день по id
  */
 export async function updateDay(item) {

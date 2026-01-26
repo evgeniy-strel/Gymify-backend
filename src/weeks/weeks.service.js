@@ -32,6 +32,45 @@ export async function getWeek(id) {
 }
 
 /**
+ * Создание новой недели для программы
+ * @param {string} programId
+ */
+export async function createWeek(programId) {
+  // 1. Получаем количество недель у программы
+  const { count, error: countError } = await supabase
+    .from("Weeks")
+    .select("*", { count: "exact", head: true })
+    .eq("program_id", programId);
+
+  if (countError) throw countError;
+
+  const number = (count ?? 0) + 1;
+  const id = `${programId}_${number}`;
+
+  // 2. Создаем неделю
+  const { data, error } = await supabase
+    .from("Weeks")
+    .insert([
+      {
+        id,
+        program_id: programId,
+        number,
+      },
+    ])
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  await updateProgram({
+    id: programId,
+    totalWeek: number
+  })
+
+  return data;
+}
+
+/**
  * Функция обновления недели, если она завершена, то обновляем у программы текущий прогресс
  */
 export async function updateWeek(item) {

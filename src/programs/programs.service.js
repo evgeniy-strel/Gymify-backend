@@ -3,7 +3,8 @@ import { supabase } from "../supabase.js";
 export async function getPrograms() {
   const { data, error } = await supabase
     .from("Programs")
-    .select("*");
+    .select("*")
+    .order("order", { ascending: false });
 
   if (error) throw error;
   return data;
@@ -17,6 +18,30 @@ export async function getProgramById(id) {
     .single();
 
   if (error) throw error;
+  return data;
+}
+
+/**
+ * Создать программу
+ */
+export async function createProgram({ id, title, description }) {
+  const { data, error } = await supabase
+    .from("Programs")
+    .insert([
+      {
+        id,
+        title,
+        description,
+      },
+    ])
+    .select()
+    .single();
+
+  if (error) {
+    console.error("createProgram error:", error);
+    throw error;
+  }
+
   return data;
 }
 

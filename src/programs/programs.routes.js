@@ -1,5 +1,5 @@
 import express from "express";
-import { getPrograms, getProgramById } from "./programs.service.js";
+import { getPrograms, getProgramById, createProgram, updateProgram } from "./programs.service.js";
 
 const router = express.Router();
 
@@ -20,6 +20,31 @@ router.get("/:id", async (req, res) => {
   } catch (error) {
     console.error("getProgramById error:", error);
     res.status(500).json({ error: error.message });
+  }
+});
+
+router.post("/", async (req, res) => {
+  try {
+    const { id, title, description } = req.body;
+
+    if (!id || !title) {
+      return res.status(400).json({
+        error: "id and title are required",
+      });
+    }
+
+    const program = await createProgram({
+      id,
+      title,
+      description,
+    });
+
+    res.json(program);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: "Failed to create program",
+    });
   }
 });
 
