@@ -1,12 +1,14 @@
 import express from "express";
-import { getWorkoutHistory } from "./history.service.js";
+import { getWorkoutHistory, getWorkoutHistoryGrouped } from "./history.service.js";
 
 const router = express.Router();
 
 // GET /history
 router.get("/", async (req, res) => {
   try {
-    const history = await getWorkoutHistory();
+    const { grouped = false } = (req.query || {});
+
+    const history = await (grouped ? getWorkoutHistoryGrouped() : getWorkoutHistory());
     res.json(history);
   } catch (err) {
     console.error("history error:", err);
