@@ -12,6 +12,8 @@ export async function getDays(programId, weekNumber) {
       title,
       is_completed,
       week_id,
+      started_at,
+      completed_at,
       created_at,
       Exercises(count)
     `)
@@ -31,6 +33,36 @@ export async function getDays(programId, weekNumber) {
     .map(({ Exercises, ...rest }) => rest);
 
   return result;
+}
+
+/**
+ * Получить все дни программы
+ * @param {string} programId
+ */
+export async function getProgramDays(programId) {
+  // Получаем недели программы
+  const { data: weeks, error: weeksError } = await supabase
+    .from("Weeks")
+    .select("id, number")
+    .eq("program_id", programId);
+
+  if (weeksError) throw weeksError;
+
+  if (!weeks.length) return [];
+
+  const weekIds = weeks.map(w => w.id);
+
+  // Получаем дни этих недель
+  const { data: days, error: daysError } = await supabase
+    .from("Days")
+    .select("*")
+    .in("week_id", weekIds)
+    .order("week_id", { ascending: true })
+    .order("number", { ascending: true });
+
+  if (daysError) throw daysError;
+
+  return days;
 }
 
 /**
