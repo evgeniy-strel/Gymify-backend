@@ -52,7 +52,14 @@ export async function getProgramDays(programId) {
 
   const weekIds = weeks.map(w => w.id);
 
-  // Получаем дни этих недель
+
+  return getDaysByWeeks(weekIds);
+}
+
+/**
+ * Получить дни по id неделей
+ */
+export async function getDaysByWeeks(weekIds) {
   const { data: days, error: daysError } = await supabase
     .from("Days")
     .select("*")

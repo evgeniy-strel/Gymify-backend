@@ -1,5 +1,6 @@
 import { supabase } from "../supabase.js";
 import { updateProgram } from "../programs/programs.service.js";
+import { getDaysByWeeks } from "../days/days.service.js";
 
 export async function getWeeks(programId) {
   const { data, error } = await supabase
@@ -13,7 +14,31 @@ export async function getWeeks(programId) {
     throw error;
   }
 
-  return data;
+  // Для завершенных неделей нет смысла получать дни, установим прогресс 100%
+  const unCompletedWeekIds = data
+    .filter(week => !week.is_completed)
+    .map(week => week.id);
+  const days = await getDaysByWeeks(unCompletedWeekIds);
+
+  // Записываем прогресс по каждой неделе
+  const weeks = data.map((week) => {
+    const currentWeekDays = days.filter(
+      (day) => day.week_id === week.id,
+    );
+
+    let progress;
+    if (week.is_completed) {
+      progress = 1;
+    } else if (currentWeekDays.length === 0) {
+      progress = 0;
+    } else {
+      progress = currentWeekDays.filter(day => day.is_completed).length / currentWeekDays.length
+    }
+
+    return {...week, progress};
+  });
+
+  return weeks;
 }
 
 export async function getWeek(id) {
@@ -64,8 +89,8 @@ export async function createWeek(programId) {
 
   await updateProgram({
     id: programId,
-    totalWeek: number
-  })
+    totalWeek: number,
+  });
 
   return data;
 }
@@ -94,11 +119,11 @@ export async function updateWeek(item) {
 
   const week = await getWeek(id);
   const weeks = await getWeeks(week.program_id);
-  const completedWeeks = weeks.filter(week => week.is_completed).length;
+  const completedWeeks = weeks.filter((week) => week.is_completed).length;
   await updateProgram({
     id: week.program_id,
-    currentWeek: completedWeeks
-  })
+    currentWeek: completedWeeks,
+  });
 
   return data;
 }
