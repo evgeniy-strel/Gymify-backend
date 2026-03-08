@@ -5,26 +5,63 @@ export async function getExercises(programId, week, day) {
 
   const { data, error } = await supabase
     .from("Exercises")
-    .select(`
+    .select(
+      `
       *,
-      Sets(count)
-    `)
+      sets:Sets(*)
+    `,
+    )
     .eq("day_id", dayId)
-    .order("created_at", { ascending: true });
+    .order("created_at", { ascending: true })
+    .order("created_at", { foreignTable: "Sets", ascending: true });
 
   if (error) {
     console.error("Supabase getExercises error:", error);
     throw error;
   }
 
-  return data.map((ex) => {
-    const sets_count = ex.Sets?.[0]?.count ?? 0;
-    const { Sets, ...rest } = ex;
-    return {
-      ...rest,
-      sets_count,
-    };
+  return data.map((exercise) => ({
+    ...exercise,
+    description: formatSetsToDescription(exercise.sets),
+  }));
+}
+
+function formatSetsToDescription(sets) {
+  if (!sets.length) {
+    return "Подходы не заполнены";
+  }
+
+  let description = "";
+  let group = {};
+
+  const addDescription = (group) => {
+    return ' ' + [group.weight_percent, group.reps, group.count_sets]
+      .filter((v) => v)
+      .join("x");
+  };
+
+  sets.forEach((set, index) => {
+    const isSameGroup =
+      set.weight_percent === group.weight_percent && set.reps === group.reps;
+
+    if (!isSameGroup && index !== 0) {
+      description += addDescription(group);
+    }
+
+    if (isSameGroup) {
+      group.count_sets++;
+    } else {
+      group.weight_percent = set.weight_percent;
+      group.reps = set.reps;
+      group.count_sets = 1;
+    }
+
+    if (sets.length - 1 === index) {
+      description += addDescription(group);
+    }
   });
+
+  return description.trim().split(" ").join("; ");
 }
 
 export async function getExerciseById(exerciseId) {
