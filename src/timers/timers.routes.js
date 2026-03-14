@@ -1,7 +1,7 @@
 import express from "express";
 import webpush from "web-push";
 
-import { startTimer, checkTimer } from "./timers.service.js";
+import { startTimer, checkTimer, resetTimer } from "./timers.service.js";
 
 const router = express.Router();
 
@@ -28,6 +28,16 @@ router.post("/start", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ ok: false, error });
+  }
+});
+
+router.get("/reset", async (req, res) => {
+  try {
+    const timer = await resetTimer();
+    res.json({ ok: true, timer });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ ok: false, error: err });
   }
 });
 

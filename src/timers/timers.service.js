@@ -69,10 +69,14 @@ export async function checkTimer() {
   }
 
   // Сбрасываем запись
-  await supabase
+  await resetTimer();
+
+  return { active: false };
+}
+
+export async function resetTimer() {
+  return supabase
     .from("Timers")
     .update({ end_at: null, subscription: null, event: null, message: null })
     .eq("id", "rest_timer");
-
-  return { active: false };
 }
