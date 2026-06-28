@@ -1,5 +1,5 @@
 import express from "express";
-import { getPrograms, getProgramById, createProgram, updateProgram } from "./programs.service.js";
+import { getPrograms, getProgramById, createProgram, updateProgram, deleteProgram } from "./programs.service.js";
 
 const router = express.Router();
 
@@ -58,6 +58,22 @@ router.put("/:id", async (req, res) => {
   } catch (error) {
     res.status(500).json({
       error: "Failed to update program",
+      details: error.message,
+    });
+  }
+});
+
+/**
+ * DELETE /programs/:id
+ */
+router.delete("/:id", async (req, res) => {
+  try {
+    const program = await deleteProgram(req.params.id);
+
+    res.json(program);
+  } catch (error) {
+    res.status(500).json({
+      error: "Failed to delete program",
       details: error.message,
     });
   }

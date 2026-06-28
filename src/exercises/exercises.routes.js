@@ -1,6 +1,6 @@
 // src/exercises/exercises.routes.js
 import express from "express";
-import { createExercise, updateExercise, getExercises, getExerciseById } from "./exercises.service.js";
+import { createExercise, updateExercise, getExercises, getExerciseById, deleteExercise } from "./exercises.service.js";
 
 const router = express.Router();
 
@@ -61,3 +61,18 @@ router.put("/:id", async (req, res) => {
 });
 
 export default router;
+
+/**
+ * DELETE /exercises/:id
+ * Удалить упражнение по id
+ */
+router.delete("/:id", async (req, res) => {
+  try {
+    const exercise = await deleteExercise(req.params.id);
+    res.json(exercise);
+  } catch (error) {
+    res.status(500).json({
+      error: error.message || "Failed to delete exercise",
+    });
+  }
+});

@@ -1,5 +1,5 @@
 import express from "express";
-import { getSets, createSet, updateSet } from "./sets.service.js";
+import { getSets, createSet, updateSet, deleteSet } from "./sets.service.js";
 
 const router = express.Router();
 
@@ -43,6 +43,23 @@ router.put("/:id", async (req, res) => {
   } catch (error) {
     res.status(500).json({
       error: "Failed to update set",
+      details: error.message,
+    });
+  }
+});
+
+/**
+ * DELETE /sets/:id
+ * Удалить подход
+ */
+router.delete("/:id", async (req, res) => {
+  try {
+    const deleted = await deleteSet(req.params.id);
+
+    res.json(deleted);
+  } catch (error) {
+    res.status(500).json({
+      error: "Failed to delete set",
       details: error.message,
     });
   }

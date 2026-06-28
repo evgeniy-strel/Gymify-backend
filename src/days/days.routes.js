@@ -1,5 +1,5 @@
 import express from "express";
-import { getDays, createDay, updateDay, getDayById } from "./days.service.js";
+import { getDays, createDay, updateDay, getDayById, deleteDay } from "./days.service.js";
 
 const router = express.Router();
 
@@ -61,6 +61,19 @@ router.put("/:id", async (req, res) => {
   } catch (error) {
     res.status(500).json({
       error: "Failed to update day",
+      details: error.message,
+    });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const deletedDay = await deleteDay(req.params.id);
+
+    res.json(deletedDay);
+  } catch (error) {
+    res.status(500).json({
+      error: "Failed to delete day",
       details: error.message,
     });
   }

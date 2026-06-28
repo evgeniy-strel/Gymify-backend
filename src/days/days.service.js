@@ -148,3 +148,22 @@ export async function updateDay(item) {
 
   return data;
 }
+
+/**
+ * Удалить день по id
+ */
+export async function deleteDay(dayId) {
+  const { data, error } = await supabase
+    .from("Days")
+    .delete()
+    .eq("id", dayId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Supabase deleteDay error:", error);
+    throw error;
+  }
+
+  return data;
+}

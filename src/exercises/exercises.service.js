@@ -111,3 +111,19 @@ export async function updateExercise(item) {
 
   return data;
 }
+
+export async function deleteExercise(id) {
+  const { data, error } = await supabase
+    .from("Exercises")
+    .delete()
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error deleting exercise:", error);
+    throw error;
+  }
+
+  return data;
+}

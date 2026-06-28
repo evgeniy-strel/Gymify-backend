@@ -51,3 +51,19 @@ export async function updateSet(id, fields) {
 
   return data;
 }
+
+export async function deleteSet(id) {
+  const { data, error } = await supabase
+    .from("Sets")
+    .delete()
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Supabase deleteSet error:", error);
+    throw error;
+  }
+
+  return data;
+}

@@ -117,12 +117,35 @@ export async function updateWeek(item) {
     return data;
   }
 
-  const week = await getWeek(id);
-  const weeks = await getWeeks(week.program_id);
+  const weeks = await getWeeks(data.program_id);
   const completedWeeks = weeks.filter((week) => week.is_completed).length;
   await updateProgram({
-    id: week.program_id,
+    id: data.program_id,
     currentWeek: completedWeeks,
+  });
+
+  return data;
+}
+
+export async function deleteWeek(id) {
+  const { data, error } = await supabase
+    .from("Weeks")
+    .delete()
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Delete week error:", error);
+    throw error;
+  }
+
+  const weeks = await getWeeks(data.program_id);
+  const completedWeeks = weeks.filter((week) => week.is_completed).length;
+  await updateProgram({
+    id: data.program_id,
+    currentWeek: completedWeeks,
+    totalWeek: weeks.length
   });
 
   return data;

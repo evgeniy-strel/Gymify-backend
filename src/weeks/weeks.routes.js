@@ -1,5 +1,5 @@
 import express from "express";
-import { getWeeks, createWeek, updateWeek } from "./weeks.service.js";
+import { getWeeks, createWeek, updateWeek, deleteWeek } from "./weeks.service.js";
 
 const router = express.Router();
 
@@ -46,6 +46,22 @@ router.put("/:id", async (req, res) => {
   } catch (error) {
     res.status(500).json({
       error: "Failed to update week",
+      details: error.message,
+    });
+  }
+});
+
+/**
+ * PUT /delete/:id
+ */
+router.delete("/:id", async (req, res) => {
+  try {
+    const deletedWeek = await deleteWeek(req.params.id);
+
+    res.json(deletedWeek);
+  } catch (error) {
+    res.status(500).json({
+      error: "Failed to delete week",
       details: error.message,
     });
   }

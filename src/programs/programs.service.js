@@ -65,3 +65,22 @@ export async function updateProgram(item) {
 
   return data;
 }
+
+/**
+ * Удалить программу по id
+ */
+export async function deleteProgram(id) {
+  const { data, error } = await supabase
+    .from("Programs")
+    .delete()
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Supabase deleteProgram error:", error);
+    throw error;
+  }
+
+  return data;
+}
