@@ -1,5 +1,7 @@
 import express from "express";
+
 import { getDays, createDay, updateDay, getDayById, deleteDay } from "./days.service.js";
+import { requireAdmin } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
@@ -32,6 +34,8 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to load day" });
   }
 });
+
+router.use(requireAdmin);
 
 /**
  * POST /days

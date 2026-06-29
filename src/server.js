@@ -2,7 +2,7 @@ import 'dotenv/config'; // автоматически подгружает .env
 import express from "express";
 import cors from "cors";
 
-
+import authRoutes from "./auth/auth.routes.js";
 import weeksRoutes from "./weeks/weeks.routes.js";
 import programsRoutes from "./programs/programs.routes.js";
 import exercisesRoutes from "./exercises/exercises.routes.js";
@@ -21,6 +21,7 @@ app.get("/", (_, res) => {
   res.json({ status: "ok" });
 });
 
+app.use("/auth", authRoutes);
 app.use("/weeks", weeksRoutes);
 app.use("/programs", programsRoutes);
 app.use("/days", daysRoutes);

@@ -1,5 +1,7 @@
 import express from "express";
+
 import { getWeeks, createWeek, updateWeek, deleteWeek } from "./weeks.service.js";
+import { requireAdmin } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
@@ -14,6 +16,8 @@ router.get("/:programId", async (req, res) => {
     });
   }
 });
+
+router.use(requireAdmin);
 
 /**
  * POST /weeks

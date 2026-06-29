@@ -2,6 +2,7 @@ import express from "express";
 import webpush from "web-push";
 
 import { startTimer, checkTimer, resetTimer } from "./timers.service.js";
+import { requireAdmin } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
@@ -14,22 +15,6 @@ webpush.setVapidDetails(
   VAPID_PUBLIC_KEY,
   VAPID_PRIVATE_KEY
 );
-
-/**
- * Сохранить подписку в БД и запустить таймер
- */
-router.post("/start", async (req, res) => {
-  try {
-    const { subscription, seconds } = req.body;
-    if (!seconds || !subscription || !seconds) return res.status(400).json({ error: "seconds, subscription and event required" });
-
-    const timer = await startTimer(req.body);
-    res.json({ ok: true, timer });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ ok: false, error });
-  }
-});
 
 router.get("/reset", async (req, res) => {
   try {
@@ -48,6 +33,24 @@ router.get("/check", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ ok: false, error: err });
+  }
+});
+
+router.use(requireAdmin);
+
+/**
+ * Сохранить подписку в БД и запустить таймер
+ */
+router.post("/start", async (req, res) => {
+  try {
+    const { subscription, seconds } = req.body;
+    if (!seconds || !subscription || !seconds) return res.status(400).json({ error: "seconds, subscription and event required" });
+
+    const timer = await startTimer(req.body);
+    res.json({ ok: true, timer });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ ok: false, error });
   }
 });
 

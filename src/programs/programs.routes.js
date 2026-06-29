@@ -1,5 +1,7 @@
 import express from "express";
+
 import { getPrograms, getProgramById, createProgram, updateProgram, deleteProgram } from "./programs.service.js";
+import { requireAdmin } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
@@ -22,6 +24,8 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+router.use(requireAdmin);
 
 router.post("/", async (req, res) => {
   try {

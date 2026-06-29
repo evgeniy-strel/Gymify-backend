@@ -6,30 +6,9 @@ import {
   getBodyWeightHistoryGrouped,
   getCurrentBodyWeight,
 } from "./bodyWeight.service.js";
+import { requireAdmin } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
-
-/**
- * POST /bodyWeight
- * body: { value_kg, measured_at }
- */
-router.post("/", async (req, res) => {
-  try {
-    const { value_kg, measured_at } = req.body;
-
-    if (value_kg == null || !measured_at) {
-      return res.status(400).json({
-        error: "value_kg and measured_at are required",
-      });
-    }
-
-    const record = await createBodyWeight(req.body);
-    res.json(record);
-  } catch (err) {
-    console.error("create body weight error:", err);
-    res.status(500).json({ error: "Failed to create body weight record" });
-  }
-});
 
 /**
  * GET /bodyWeight
@@ -69,6 +48,30 @@ router.get("/current", async (req, res) => {
   } catch (err) {
     console.error("Error getting current body weight:", err);
     res.status(500).json({ error: "Failed to get current body weight" });
+  }
+});
+
+router.use(requireAdmin);
+
+/**
+ * POST /bodyWeight
+ * body: { value_kg, measured_at }
+ */
+router.post("/", async (req, res) => {
+  try {
+    const { value_kg, measured_at } = req.body;
+
+    if (value_kg == null || !measured_at) {
+      return res.status(400).json({
+        error: "value_kg and measured_at are required",
+      });
+    }
+
+    const record = await createBodyWeight(req.body);
+    res.json(record);
+  } catch (err) {
+    console.error("create body weight error:", err);
+    res.status(500).json({ error: "Failed to create body weight record" });
   }
 });
 

@@ -1,6 +1,7 @@
-// src/exercises/exercises.routes.js
 import express from "express";
+
 import { createExercise, updateExercise, getExercises, getExerciseById, deleteExercise } from "./exercises.service.js";
+import { requireAdmin } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
@@ -33,6 +34,8 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to load exercise", details: error.message });
   }
 });
+
+router.use(requireAdmin);
 
 /**
  * POST /exercises

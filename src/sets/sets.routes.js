@@ -1,5 +1,7 @@
 import express from "express";
+
 import { getSets, createSet, updateSet, deleteSet } from "./sets.service.js";
+import { requireAdmin } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
@@ -15,6 +17,8 @@ router.get("/:exerciseId", async (req, res) => {
     res.status(500).json({ error: "Failed to load sets", details: error.message });
   }
 });
+
+router.use(requireAdmin);
 
 /**
  * POST /sets
