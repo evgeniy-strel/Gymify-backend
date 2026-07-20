@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createBodyWeight,
+  deleteBodyWeight,
   getBodyWeightGraphData,
   getBodyWeightHistory,
   getBodyWeightHistoryGrouped,
@@ -72,6 +73,30 @@ router.post("/", async (req, res) => {
   } catch (err) {
     console.error("create body weight error:", err);
     res.status(500).json({ error: "Failed to create body weight record" });
+  }
+});
+
+/**
+ * Удаление записи веса тела
+ */
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        error: "id is required",
+      });
+    }
+
+    const record = await deleteBodyWeight(id);
+
+    res.json(record);
+  } catch (err) {
+    console.error("delete body weight error:", err);
+    res.status(500).json({
+      error: "Failed to delete body weight record",
+    });
   }
 });
 

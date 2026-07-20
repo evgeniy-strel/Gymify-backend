@@ -132,3 +132,21 @@ export async function getCurrentBodyWeight() {
 
   return data;
 }
+
+/**
+ * Удаление записи веса тела
+ */
+export async function deleteBodyWeight(id) {
+  const { data, error } = await supabase
+    .from("BodyWeight")
+    .delete()
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
