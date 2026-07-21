@@ -1,6 +1,6 @@
 import express from "express";
 
-import { getPrograms, getProgramById, createProgram, updateProgram, deleteProgram } from "./programs.service.js";
+import { getPrograms, getProgramById, createProgram, updateProgram, deleteProgram, duplicateProgram } from "./programs.service.js";
 import { requireAdmin } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
@@ -79,6 +79,31 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({
       error: "Failed to delete program",
       details: error.message,
+    });
+  }
+});
+
+/**
+ * POST /programs/:id/duplicate
+ */
+router.post("/:id/duplicate", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        error: "Program id is required",
+      });
+    }
+
+    const duplicatedProgram = await duplicateProgram(id);
+
+    res.status(201).json(duplicatedProgram);
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      error: error.message,
     });
   }
 });

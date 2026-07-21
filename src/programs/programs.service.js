@@ -84,3 +84,21 @@ export async function deleteProgram(id) {
 
   return data;
 }
+
+/**
+ * Клонирование программы (всех записей таблицы: weeks, days, exercises, sets)
+ * При ошибке создания одной из сущности завершает процесс
+ */
+export async function duplicateProgram(id) {
+  const { data, error } = await supabase.rpc("duplicate_program", {
+    p_program_id: id,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return {
+    id: data,
+  };
+};
