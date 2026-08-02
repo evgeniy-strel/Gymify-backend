@@ -12,7 +12,7 @@ export async function getExercises(programId, week, day) {
     `,
     )
     .eq("day_id", dayId)
-    .order("created_at", { ascending: true })
+    .order("order", { ascending: true })
     .order("created_at", { foreignTable: "Sets", ascending: true });
 
   if (error) {
