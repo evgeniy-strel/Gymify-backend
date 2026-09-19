@@ -1,5 +1,36 @@
 import { supabase } from "../supabase.js";
 
+/** Первый незавершённый день первой незавершённой недели. */
+export async function getNextWorkout(programId) {
+  const { data: week, error: weeksError } = await supabase
+    .from("Weeks")
+    .select("id, number")
+    .eq("program_id", programId)
+    .eq("is_completed", false)
+    .order("number", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  if (weeksError) throw weeksError;
+  if (!week) return null;
+
+  const { data: day, error: daysError } = await supabase
+    .from("Days")
+    .select("number")
+    .eq("week_id", week.id)
+    .eq("is_completed", false)
+    .order("number", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  if (daysError) throw daysError;
+
+  // Если дни пройдены или ещё не созданы, открываем саму неделю.
+  return day
+    ? { weekNumber: week.number, dayNumber: day.number }
+    : { weekNumber: week.number };
+}
+
 export async function getPrograms() {
   const { data, error } = await supabase
     .from("Programs")

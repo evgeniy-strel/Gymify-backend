@@ -1,6 +1,6 @@
 import express from "express";
 
-import { getPrograms, getProgramById, createProgram, updateProgram, deleteProgram, duplicateProgram } from "./programs.service.js";
+import { getPrograms, getProgramById, createProgram, updateProgram, deleteProgram, duplicateProgram, getNextWorkout } from "./programs.service.js";
 import { requireAdmin } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
@@ -22,6 +22,15 @@ router.get("/:id", async (req, res) => {
   } catch (error) {
     console.error("getProgramById error:", error);
     res.status(500).json({ error: error.message });
+  }
+});
+
+router.get("/:id/next-workout", async (req, res) => {
+  try {
+    res.json(await getNextWorkout(req.params.id));
+  } catch (error) {
+    console.error("getNextWorkout error:", error);
+    res.status(500).json({ error: "Не удалось получить следующую тренировку" });
   }
 });
 
