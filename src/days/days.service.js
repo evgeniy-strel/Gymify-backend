@@ -128,11 +128,29 @@ export async function createDay(weekId, title) {
   return data;
 }
 
+async function validateCompletedAt(id, fields) {
+  if (fields.completed_at !== undefined && fields.completed_at !== null) {
+    const end = typeof fields.completed_at === "string" ? Date.parse(fields.completed_at) : NaN;
+    if (!Number.isFinite(end) || end > Date.now()) {
+      throw Object.assign(new Error("Некорректное время окончания"), { status: 400 });
+    }
+
+    const day = await getDayById(id);
+    const startedAt = fields.started_at !== undefined ? fields.started_at : day.started_at;
+    const start = startedAt ? Date.parse(startedAt) : NaN;
+    if (!Number.isFinite(start) || end < start) {
+      throw Object.assign(new Error("Окончание должно быть не раньше начала тренировки"), { status: 400 });
+    }
+    fields.completed_at = new Date(end).toISOString();
+  }
+}
+
 /**
  * Обновить день по id
  */
 export async function updateDay(item) {
   const { id, ...fields } = item;
+  await validateCompletedAt(id, fields);
 
   const { data, error } = await supabase
     .from("Days")

@@ -59,11 +59,11 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   try {
-    const updatedDay = await updateDay({ id: req.params.id, ...req.body });
+    const updatedDay = await updateDay({ ...req.body, id: req.params.id });
 
     res.json(updatedDay);
   } catch (error) {
-    res.status(500).json({
+    res.status(error.status || 500).json({
       error: "Failed to update day",
       details: error.message,
     });
